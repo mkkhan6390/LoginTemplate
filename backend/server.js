@@ -5,6 +5,7 @@ const mysql = require("mysql2")
 const session = require("express-session")
 const mysqlStore = require("express-mysql-session")(session)
 const { hashSync, genSaltSync, compareSync } = require("bcrypt");
+const getAddress = require('india-pincode-search');
 require("dotenv").config()
 
 const db = require('./db');
@@ -45,15 +46,17 @@ app.use(session({
 app.post('/signup', async (req, res) => {
     console.log("got request")
     console.log(req.body)
-    try {
-        const firstName = req.body.firstName;
-        const lastName = req.body.lastName;
-        const phone = req.body.phone
+    try { 
+        const name = req.body.fullname;
+        const phone = req.body.phone;
         const email = req.body.email;
+        const adhaar = req.body.adhaar;
+        const address = req.body.address
+
         let password = req.body.password;
 
-        if (!firstName || !lastName || !email || !password) 
-            return res.sendStatus(400)
+        if (!name || !phone || !password) 
+            return res.status(400).send("Invalid Form Data")
         
 
         if(db.getUserByEmail(email))
@@ -62,7 +65,7 @@ app.post('/signup', async (req, res) => {
         const salt = genSaltSync(10);
         password = hashSync(password, salt);
 
-        const user = await db.addUser(firstName, lastName, phone, email, password)
+        const user = await db.addUser(name, phone, email, adhaar, address, password)
             .then(insertId => { return db.getUserById(insertId); });
 
         req.session.userId = user.id
@@ -108,6 +111,14 @@ app.post('/logout', (req, res) => {
         res.sendStatus(200)
     })
 
+})
+
+app.get('/getAddress',(req, res)=>{
+    const pincode = req.query.pincode
+    const address = getAddress.search(pincode)
+    
+    console.log(address)  
+    res.send(address)  
 })
 
 app.get('/test', (req, res) => {

@@ -35,9 +35,9 @@ db.getUserByEmail = (email) => {
     })
 }
 
-db.addUser = (firstName, lastName, phone, email, password) => {
+db.addUser = (name, phone, email, adhaar, address, password) => {
     return new Promise((resolve, reject) => {
-        pool.query('INSERT INTO user (firstname, lastname, phone, email, password) VALUES (?, ?, ?, ?, ?)', [firstName, lastName, phone, email, password],
+        pool.query('INSERT INTO user (name, phone, email, adhaar, address, password) VALUES (?, ?, ?, ?, ?, ?)', [name, phone, email, adhaar, address, password],
             (error, result) => {
                 if (error) { return reject(error) }
                 return resolve(result.insertId);

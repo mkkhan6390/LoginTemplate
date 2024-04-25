@@ -17,6 +17,7 @@
     "express": "^4.19.1",
     "express-mysql-session": "^3.0.0",
     "express-session": "^1.18.0",
+    "india-pincode-search": "^1.0.2",
     "mysql2": "^3.9.2"
   }
 }
